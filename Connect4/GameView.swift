@@ -17,13 +17,15 @@ struct GameView: View {
                 InfoView()
                 Spacer()
                 let scale = min(geometry.size.width, geometry.size.height)
+                let cellSize = scale / CGFloat(max(game.boardWidth, game.boardHeight))
                 BoardView()
                     .frame(
-                        width: scale,
-                        height: scale,
-                        alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/
+                        width: cellSize * CGFloat(game.boardWidth),
+                        height: cellSize * CGFloat(game.boardHeight),
+                        alignment: .center
                     )
             }
+            .navigationTitle("Connect \(game.winLength)")
         }
     }
 }
@@ -57,36 +59,35 @@ struct BoardView: View {
     var game: Connect4
     
     var body: some View {
-        VStack {
-            HStack {
-                ForEach(0..<Algo.boardWidth) { column in
-                    let columnIndex = Algo.boardWidth - column - 1
-                    VStack {
-                        ForEach(0..<Algo.boardHeight) { row in
-                            ZStack {
-                                Rectangle()
-                                    .foregroundColor(.white)
-                                    .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-                                // Since our model layer's representation of the game
-                                // board is 'rotated', we do some arithmetic here
-                                // to render the pieces in the correct smots
-                                let rowIndex = Algo.boardHeight - row - 1
-                                if game.board.indices.contains(columnIndex),
-                                   game.board[columnIndex].indices.contains(rowIndex) {
-                                    let piece = game.board[columnIndex][rowIndex]
-                                    Circle()
-                                        .foregroundColor(piece == .red ? Color.red : Color.black)
-                                }
+        HStack {
+            ForEach(0..<game.boardWidth) { column in
+                // Since our model layer's representation of the game
+                // board is 'rotated', we do some arithmetic here
+                // to render the pieces in the correct spots
+                let columnIndex = game.boardWidth - column - 1
+                VStack {
+                    ForEach(0..<game.boardHeight) { row in
+                        ZStack {
+                            Circle()
+                                .strokeBorder(Color.black, lineWidth: 1)
+                                .background(Circle().foregroundColor(Color.white))
+                            let rowIndex = game.boardHeight - row - 1
+                            if game.board.indices.contains(columnIndex),
+                               game.board[columnIndex].indices.contains(rowIndex) {
+                                let piece = game.board[columnIndex][rowIndex]
+                                Circle()
+                                    .strokeBorder(Color.black, lineWidth: 1)
+                                    .background(Circle().foregroundColor(piece == .red ? Color.red : Color.black))
                             }
-                            
                         }
                     }
-                    .onTapGesture(count: 1, perform: {
-                        game.play(at: columnIndex)
-                    })
                 }
+                .onTapGesture(count: 1, perform: {
+                    game.play(at: columnIndex)
+                })
             }
-            .padding()
         }
+        .background(Color.yellow)
+        .border(Color.black)
     }
 }

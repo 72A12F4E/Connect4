@@ -12,7 +12,6 @@ struct Connect4App: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(Connect4())
         }
     }
 }

@@ -26,8 +26,13 @@ extension Piece: CustomDebugStringConvertible {
 }
 
 class Connect4: ObservableObject {
+    
+    public let boardWidth: Int
+    public let boardHeight: Int
+    public let winLength: Int
+    
     @Published
-    public private(set) var board: [[Piece?]] = Array(repeating: [], count: Algo.boardWidth)
+    public private(set) var board: [[Piece?]]
     
     @Published
     public private(set) var winner: Piece?
@@ -35,13 +40,26 @@ class Connect4: ObservableObject {
     @Published
     public private(set) var turn: Piece = .red
     
+    init(
+        width: Int = 7,
+        height: Int = 6,
+        winLength: Int = 4
+    ) {
+        self.boardWidth = width
+        self.boardHeight = height
+        self.winLength = winLength
+        board = Array(repeating: [], count: boardWidth)
+        winner = nil
+        turn = .red
+    }
+    
     func play(at column: Int) {
         guard winner == nil,
               board.indices.contains(column),
-              board[column].count < Algo.boardHeight else { return }
+              board[column].count < boardHeight else { return }
         
         board[column].append(turn)
-        if let p = Algo.checkWinner(board) {
+        if let p = checkWinner(board) {
             winner = p
         } else {
             turn = turn == .red ? .black : .red
@@ -49,18 +67,12 @@ class Connect4: ObservableObject {
     }
     
     func reset() {
-        board = Array(repeating: [], count: Algo.boardWidth)
+        board = Array(repeating: [], count: boardWidth)
         winner = nil
         turn = .red
     }
-}
-
-enum Algo {
-    static let boardWidth = 7
-    static let boardHeight = 6
-    static let winLength = 4
     
-    static func checkWinner(_ board: [[Piece?]]) -> Piece? {
+    func checkWinner(_ board: [[Piece?]]) -> Piece? {
         //check columns
         for column in board where column.count >= winLength {
             for offset in 0...column.count - winLength {
