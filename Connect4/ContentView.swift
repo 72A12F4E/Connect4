@@ -8,17 +8,21 @@
 import SwiftUI
 import Combine
 
+private let defaultPiecesToWin = 4
+private let defaultColumns = 7
+private let defaultRows = 6
+
 struct ContentView: View {
-    
-    @State var piecesToWin: Int = 4
+        
+    @State var piecesToWin: Int = defaultPiecesToWin
     let piecesOptions = Array(3...8)
     
-    @State var columns: Int = 7
+    @State var columns: Int = defaultColumns
     var columnOptions: [Int] {
         Array(piecesToWin...15)
     }
     
-    @State var rows: Int = 6
+    @State var rows: Int = defaultRows
     var rowOptions: [Int] {
         Array(piecesToWin...15)
     }
@@ -46,6 +50,16 @@ struct ContentView: View {
                     Picker("Rows", selection: $rows) {
                         ForEach(rowOptions, id: \.self) {
                             Text("\($0)")
+                        }
+                    }
+                    
+                    if piecesToWin != defaultPiecesToWin ||
+                        columns != defaultColumns ||
+                        rows != defaultRows {
+                        Button("Reset Settings") {
+                            piecesToWin = defaultPiecesToWin
+                            columns = defaultColumns
+                            rows = defaultRows
                         }
                     }
                 }
