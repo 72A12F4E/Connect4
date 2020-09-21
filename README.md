@@ -1,6 +1,6 @@
 # Connect 4
 
-A Connect4 game made in an afternoon for fun with SwiftUI.
+A Connect4 game made in an afternoon for fun with SwiftUI. Supports dynamic board sizes and custom win lengths.
 
 ## Screenshots
 
